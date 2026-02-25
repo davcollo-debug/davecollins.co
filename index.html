@@ -13,12 +13,14 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --orange: #069494;
+      --hero-bg: #1c3a14;
+      --hero-text: #c8d2ad;
       --white: #ffffff;
       --ink: #1a1a1a;
       --mid: #555;
       --light: #999;
       --border: #e0e0e0;
+      --accent: #1c3a14;
       --lato: 'Lato', 'Helvetica Neue', Arial, sans-serif;
       --opensans: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
     }
@@ -35,7 +37,7 @@
 
     /* ── HEADER / NAV ── */
     #header {
-      background: var(--orange);
+      background: var(--hero-bg);
       position: sticky;
       top: 0;
       z-index: 200;
@@ -55,7 +57,7 @@
       font-family: var(--lato);
       font-weight: 700;
       font-size: 2rem;
-      color: #FCE883;
+      color: var(--hero-text);
       text-decoration: none;
       letter-spacing: 0.04em;
     }
@@ -71,7 +73,7 @@
       font-family: var(--lato);
       font-size: 0.9rem;
       font-weight: 400;
-      color: #FCE883;
+      color: var(--hero-text);
       text-decoration: none;
       transition: color 0.15s;
     }
@@ -80,7 +82,7 @@
 
     /* ── HERO ── */
     #lead-in {
-      background: var(--orange);
+      background: var(--hero-bg);
       padding: 5rem 2rem 5.5rem;
     }
 
@@ -94,7 +96,7 @@
       font-weight: 700;
       font-size: clamp(2.8rem, 6vw, 4.75rem);
       line-height: 1.1;
-      color: #FCE883;
+      color: var(--hero-text);
       letter-spacing: -0.01em;
       margin-bottom: 1.5rem;
       max-width: 820px;
@@ -105,7 +107,7 @@
       font-weight: 300;
       font-size: clamp(1.4rem, 3vw, 2rem);
       line-height: 1.45;
-      color: #FCE883;
+      color: var(--hero-text);
       max-width: 780px;
       margin-bottom: 1.75rem;
     }
@@ -114,7 +116,7 @@
       font-family: var(--opensans);
       font-weight: 300;
       font-size: clamp(0.95rem, 1.8vw, 1.1rem);
-      color: rgba(252,232,131,0.8);
+      color: rgba(200,210,173,0.8);
       line-height: 1.75;
       max-width: 660px;
     }
@@ -124,8 +126,8 @@
       display: inline-block;
       width: 26px;
       height: 26px;
-      border-left: 2px solid rgba(252,232,131,0.65);
-      border-bottom: 2px solid rgba(252,232,131,0.65);
+      border-left: 2px solid rgba(200,210,173,0.65);
+      border-bottom: 2px solid rgba(200,210,173,0.65);
       transform: rotate(-45deg);
       text-decoration: none;
     }
@@ -171,7 +173,7 @@
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--orange);
+      color: var(--accent);
       margin-bottom: 0.4rem;
     }
 
@@ -240,9 +242,7 @@
       margin-bottom: 0.85rem;
     }
 
-    .spec-list {
-      list-style: none;
-    }
+    .spec-list { list-style: none; }
 
     .spec-list li {
       font-family: var(--opensans);
@@ -295,7 +295,7 @@
       transition: color 0.15s;
     }
 
-    .contact-link:hover { color: var(--orange); }
+    .contact-link:hover { color: var(--accent); }
 
     .contact-link-label {
       font-family: var(--lato);
@@ -345,8 +345,8 @@
       font-family: var(--lato);
       font-size: 0.85rem;
       font-weight: 700;
-      color: var(--white);
-      background: #069494;
+      color: var(--hero-text);
+      background: var(--hero-bg);
       border: none;
       padding: 0.75rem 1.75rem;
       cursor: pointer;
@@ -366,24 +366,8 @@
       max-width: 1100px;
       margin: 0 auto;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
+      justify-content: flex-end;
     }
-
-    .footer-social { display: flex; gap: 1.5rem; }
-
-    .footer-social a {
-      font-family: var(--lato);
-      font-size: 0.82rem;
-      font-weight: 400;
-      color: var(--mid);
-      text-decoration: none;
-      transition: color 0.15s;
-    }
-
-    .footer-social a:hover { color: var(--orange); }
 
     .footer-copy {
       font-family: var(--opensans);
@@ -395,14 +379,10 @@
     /* ── RESPONSIVE ── */
     @media (max-width: 768px) {
       nav ul { display: none; }
-
       .service-row,
       .about-grid { grid-template-columns: 1fr; gap: 1rem; }
-
       .about-photo { max-width: 220px; }
-
       .spec-grid { grid-template-columns: 1fr; gap: 2rem; }
-
       .contact-grid { grid-template-columns: 1fr; gap: 2.5rem; }
     }
 
@@ -413,7 +393,6 @@
 </head>
 <body>
 
-<!-- HEADER -->
 <header id="header">
   <div class="header-inner">
     <a href="#" id="brand">dc</a>
@@ -428,7 +407,6 @@
   </div>
 </header>
 
-<!-- HERO -->
 <section id="lead-in">
   <div class="lead-inner">
     <h1 class="headline">When growth outpaces product capability.</h1>
@@ -438,10 +416,8 @@
   </div>
 </section>
 
-<!-- CONTENT -->
 <div id="content">
 
-  <!-- SERVICES -->
   <div class="section-block" id="services">
     <h2 class="section-heading">Services</h2>
 
@@ -491,7 +467,6 @@
 
   </div>
 
-  <!-- ABOUT DAVE -->
   <div class="section-block" id="about">
     <h2 class="section-heading">About Dave</h2>
 
@@ -501,19 +476,14 @@
       </div>
       <div class="about-body">
         <p>I'm a product leader with 20 years of experience building and fixing product organisations across regulated industries, two-sided marketplaces, and international scale-ups. I've spent my career in the seat — not advising from a distance — which is what makes the counsel useful.</p>
-
         <p>Most recently I was Chief Product Officer at Hireup, Australia's largest NDIS marketplace, where I was brought in to transform the product organisation and scale across regulated markets. Over four and a half years I led product, design, marketing, and engineering through significant growth — expanding from disability services into aged care — whilst navigating the complexity of NDIS regulation. I left with a high-performing, self-sustaining team.</p>
-
         <p>Before that I was Head of Product at ImmoScout24, Germany's leading property platform, based in Berlin. In 18 months I scaled mobile apps to market dominance across Germany, Austria, and Italy, and led product, design, research, and marketing for the New Homes business. Delivered double-digit revenue growth whilst building cross-functional teams in a genuinely fast-moving scale-up environment.</p>
-
         <p>Earlier in my career I led mobile product strategy at REA Group — realestate.com.au — during the fiercely competitive period with Domain. And I started out at Sensis during the disruption of online directories by Google Maps, which taught me what happens when you don't move fast enough.</p>
-
         <p>My specialisation is Series B–D companies (50–500 employees) in regulated industries — PropTech, HealthTech, Marketplaces — where complexity and growth collide. I'm based in Melbourne and available for in-person work across Australia and remotely worldwide.</p>
       </div>
     </div>
   </div>
 
-  <!-- SKILLS -->
   <div class="section-block" id="skills">
     <h2 class="section-heading">Skills</h2>
 
@@ -554,7 +524,6 @@
     </div>
   </div>
 
-  <!-- CONTACT -->
   <div class="section-block" id="contact">
     <h2 class="section-heading">Contact</h2>
 
@@ -568,18 +537,18 @@
             <span class="contact-link-label">Phone</span>
             +61 436 291 734
           </a>
-          <a href="/cdn-cgi/l/email-protection#c3a7a2b5a683a7a2b5a6a0acafafaaadb0eda0acaeeda2b6" class="contact-link">
+          <a href="mailto:dave@davecollins.com.au" class="contact-link">
             <span class="contact-link-label">Email</span>
-            <span class="__cf_email__" data-cfemail="e286839487a286839487818d8e8e8b8c91cc818d8fcc8397">[email&#160;protected]</span>
+            dave@davecollins.com.au
           </a>
           <a href="https://linkedin.com/in/daveacollo" class="contact-link" target="_blank">
             <span class="contact-link-label">LinkedIn</span>
-            <i class="fa-brands fa-linkedin" style="font-size:1.25rem; color: var(--orange);"></i>
+            <i class="fa-brands fa-linkedin" style="font-size:1.25rem; color: var(--accent);"></i>
             linkedin.com/in/daveacollo
           </a>
           <a href="https://wa.me/61436291734" class="contact-link" target="_blank">
             <span class="contact-link-label">WhatsApp</span>
-            <i class="fa-brands fa-whatsapp" style="font-size:1.25rem; color: var(--orange);"></i>
+            <i class="fa-brands fa-whatsapp" style="font-size:1.25rem; color: var(--accent);"></i>
             Message me directly
           </a>
         </div>
@@ -611,9 +580,13 @@
     </div>
   </div>
 
-</div><!-- /content -->
+</div>
 
-<!-- FOOTER -->
 <footer id="footer">
   <div class="footer-inner">
-    <p
+    <p class="footer-copy">&copy; 2026 Dave Collins &middot; ABN 91 409 135 980 &middot; Melbourne, Australia</p>
+  </div>
+</footer>
+
+</body>
+</html>
