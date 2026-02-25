@@ -671,11 +671,11 @@
 
         <div class="contact-details">
           <a href="tel:+61436291734" class="contact-detail-line">+61 436 291 734</a>
-          <a href="mailto:dave@davecollins.co" class="contact-detail-line">dave@davecollins.co</a>
+          <a href="/cdn-cgi/l/email-protection#91f5f0e7f4d1f5f0e7f4f2fefdfdf8ffe2bff2fe" class="contact-detail-line"><span class="__cf_email__" data-cfemail="fb9f9a8d9ebb9f9a8d9e98949797929588d59894">[email&#160;protected]</span></a>
         </div>
 
         <div class="contact-icons">
-          <a href="mailto:dave@davecollins.co" title="Email"><i class="fa-regular fa-envelope"></i></a>
+          <a href="/cdn-cgi/l/email-protection#fb9f9a8d9ebb9f9a8d9e98949797929588d59894" title="Email"><i class="fa-regular fa-envelope"></i></a>
           <a href="https://linkedin.com/in/daveacollo" target="_blank" title="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
           <a href="https://wa.me/61436291734" target="_blank" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
         </div>
@@ -716,7 +716,7 @@
   </div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   const hamburger = document.getElementById('hamburger');
   const mobileNav = document.getElementById('mobile-nav');
 
@@ -726,9 +726,15 @@
   });
 
   mobileNav.querySelectorAll('a').forEach(function(link) {
-    link.addEventListener('click', function() {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      var target = this.getAttribute('href');
       hamburger.classList.remove('is-open');
       mobileNav.classList.remove('is-open');
+      setTimeout(function() {
+        var el = document.querySelector(target);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 50);
     });
   });
 
@@ -791,14 +797,4 @@
         gtag('event', 'form_submit', { event_category: 'contact', event_label: 'contact_form' });
       })
       .catch(function() {
-        status.style.display = 'block';
-        status.style.color = '#c0392b';
-        status.textContent = 'Something went wrong — please email dave@davecollins.co directly.';
-        btn.textContent = 'Send Message';
-        btn.disabled = false;
-      });
-    });
-  }
-</script>
-</body>
-</html>
+        status.
