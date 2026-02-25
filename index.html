@@ -671,7 +671,7 @@
 
         <div class="contact-details">
           <a href="tel:+61436291734" class="contact-detail-line">+61 436 291 734</a>
-          <a href="mailto:dave@davecollins.co" class="contact-detail-line">dave@davecollins.co</a>
+          <a href="/cdn-cgi/l/email-protection#52363324371236332437313d3e3e3b3c217c313d" class="contact-detail-line"><span class="__cf_email__" data-cfemail="3b5f5a4d5e7b5f5a4d5e58545757525548155854">[email&#160;protected]</span></a>
         </div>
 
         <div class="contact-icons">
@@ -682,26 +682,27 @@
       </div>
 
       <div>
-        <form class="form">
+        <form class="form" id="contact-form">
           <div class="form-row">
             <div class="fg">
               <label>Name</label>
-              <input type="text" placeholder="Your name">
+              <input type="text" id="field-name" placeholder="Your name">
             </div>
             <div class="fg">
               <label>Email</label>
-              <input type="email" placeholder="you@company.com">
+              <input type="email" id="field-email" placeholder="you@company.com">
             </div>
           </div>
           <div class="fg">
             <label>Phone (optional)</label>
-            <input type="tel" placeholder="+61 ...">
+            <input type="tel" id="field-phone" placeholder="+61 ...">
           </div>
           <div class="fg">
             <label>Details</label>
-            <textarea placeholder=""></textarea>
+            <textarea id="field-details"></textarea>
           </div>
-          <button type="submit" class="btn-submit">Send Message</button>
+          <button type="submit" class="btn-submit" id="btn-submit">Send Message</button>
+          <p id="form-status" style="font-family: var(--opensans); font-size: 0.88rem; margin-top: 0.75rem; display: none;"></p>
         </form>
       </div>
     </div>
@@ -715,7 +716,7 @@
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></scr
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></scr
 <script>
   const hamburger = document.getElementById('hamburger');
   const mobileNav = document.getElementById('mobile-nav');
@@ -754,6 +755,51 @@
     gtag('event', 'click', { event_category: 'contact', event_label: 'whatsapp' });
   });
 
-  var contactForm = document.querySelector('.form');
-  if (contactForm) contactForm.addEventListener('submit', function() {
-    gtag('event', 'form_submit', { event_category: 'contact', event_label: 'contact_form' })
+  document.querySelectorAll('.desktop-nav a, #mobile-nav a').forEach(function(link) {
+    link.addEventListener('click', function() {
+      gtag('event', 'click', { event_category: 'navigation', event_label: this.textContent.trim() });
+    });
+  });
+
+  // Contact form → Google Sheets
+  var contactForm = document.getElementById('contact-form');
+  if (contactForm) {
+    contactForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var btn = document.getElementById('btn-submit');
+      var status = document.getElementById('form-status');
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+      var data = {
+        name:    document.getElementById('field-name').value,
+        email:   document.getElementById('field-email').value,
+        phone:   document.getElementById('field-phone').value,
+        details: document.getElementById('field-details').value
+      };
+      fetch('https://script.google.com/macros/s/AKfycbzEAvPZ318j6AYZ3XCCjYrk8OQYRZ7m9Hl29OV5szohmuJqS0KDe_gAziQZ0iQ0h4U/exec', {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      .then(function() {
+        status.style.display = 'block';
+        status.style.color = 'var(--accent)';
+        status.textContent = 'Message sent — Dave will be in touch within 24 hours.';
+        contactForm.reset();
+        btn.textContent = 'Send Message';
+        btn.disabled = false;
+        gtag('event', 'form_submit', { event_category: 'contact', event_label: 'contact_form' });
+      })
+      .catch(function() {
+        status.style.display = 'block';
+        status.style.color = '#c0392b';
+        status.textContent = 'Something went wrong — please email dave@davecollins.co directly.';
+        btn.textContent = 'Send Message';
+        btn.disabled = false;
+      });
+    });
+  }
+</script>
+</body>
+</html>
