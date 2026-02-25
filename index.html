@@ -535,7 +535,7 @@
         <div class="service-row-title">Fix The Fundamentals</div>
       </div>
       <div>
-        <p class="service-row-body">Your product team is busy but their impact is low. Roadmaps don't connect to a strategy. Things ship but customer and business outcomes don't move. Engineering is frustrated. Customers are churning. Dave conducts a current-state assessment followed by a structured transformation — clear strategy, empowered teams, outcome-focused roadmaps, and the operating rhythm to sustain it.</p>
+        <p class="service-row-body">Your product team is busy but the impact is low. Roadmaps exist but don't connect to strategy. Things ship but outcomes don't move. Engineering is frustrated. Customers are churning. Dave assesses where things stand and then fixes it — clear strategy, teams that are capable of owning outcomes, roadmaps that reflect strategic priorities, and a rhythm to sustain it.</p>
         <p class="service-row-meta">12 weeks minimum &middot; Fixed scope and price</p>
       </div>
     </div>
@@ -612,7 +612,7 @@
 
         <p>Before that Dave was Head of Product at ImmoScout24, Germany's leading property platform, based in Berlin. He led product, design, research, and marketing for the New Homes business during a period of double-digit growth. Dave also drove the rapid growth of ImmoScout24's mobile apps to market dominance across Germany.</p>
 
-        <p>Earlier in his career Dave was the mobile product lead at REA Group, during a fiercely competitive period with Domain. He started out at Sensis during the disruption of online directories by Google Maps — an early lesson in disruptive innovation.</p>
+        <p>Earlier in his career Dave led mobile product at REA Group during a fiercely competitive period with Domain. He started at Sensis as online directories were being dismantled by Google Maps — an early lesson in what happens when innovation disrupts markets.</p>
 
         <p>Dave's specialisation is Series B–D scale-ups (50–500 employees) in regulated industries — PropTech, HealthTech and Marketplaces. He is based in Melbourne and available across Australia and remotely worldwide.</p>
       </div>
@@ -726,15 +726,9 @@
   });
 
   mobileNav.querySelectorAll('a').forEach(function(link) {
-    link.addEventListener('click', function(e) {
-      e.preventDefault();
-      var target = this.getAttribute('href');
+    link.addEventListener('click', function() {
       hamburger.classList.remove('is-open');
       mobileNav.classList.remove('is-open');
-      setTimeout(function() {
-        var el = document.querySelector(target);
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
-      }, 50);
     });
   });
 
