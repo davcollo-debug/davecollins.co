@@ -716,9 +716,9 @@
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-  const hamburger = document.getElementById('hamburger');
-  const mobileNav = document.getElementById('mobile-nav');
+<script>
+  var hamburger = document.getElementById('hamburger');
+  var mobileNav = document.getElementById('mobile-nav');
 
   hamburger.addEventListener('click', function() {
     hamburger.classList.toggle('is-open');
@@ -760,7 +760,7 @@
     });
   });
 
-  // Contact form → Google Sheets
+  // Contact form to Google Sheets
   var contactForm = document.getElementById('contact-form');
   if (contactForm) {
     contactForm.addEventListener('submit', function(e) {
@@ -791,4 +791,14 @@
         gtag('event', 'form_submit', { event_category: 'contact', event_label: 'contact_form' });
       })
       .catch(function() {
-        status.
+        status.style.display = 'block';
+        status.style.color = '#c0392b';
+        status.textContent = 'Something went wrong — please email dave@davecollins.co directly.';
+        btn.textContent = 'Send Message';
+        btn.disabled = false;
+      });
+    });
+  }
+</script>
+</body>
+</html>
