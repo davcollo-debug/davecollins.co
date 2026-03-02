@@ -73,20 +73,27 @@
 
     #brand {
       font-family: var(--lato);
-      font-weight: 700;
-      font-size: 2rem;
-      color: var(--hero-text);
       text-decoration: none;
-      letter-spacing: 0.04em;
       display: flex;
-      align-items: baseline;
-      gap: 0.5rem;
+      flex-direction: column;
+      gap: 0.05rem;
+      line-height: 1;
+    }
+
+    #brand .brand-name {
+      font-weight: 700;
+      font-size: 1.35rem;
+      color: var(--hero-text);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
     }
 
     #brand .brand-tag {
-      font-weight: 300;
-      font-size: 2rem;
-      letter-spacing: 0.01em;
+      font-weight: 400;
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #e8847a;
     }
 
     .desktop-nav ul {
@@ -480,7 +487,10 @@
 <!-- HEADER -->
 <header id="header">
   <div class="header-inner">
-    <a href="#" id="brand">Dave Collins: Digital Product Consultant</a>
+    <a href="#" id="brand">
+      <span class="brand-name">Dave Collins</span>
+      <span class="brand-tag">Digital Product Consultant</span>
+    </a>
     <nav class="desktop-nav">
       <ul>
         <li><a href="#services">Services</a></li>
@@ -509,7 +519,7 @@
 <section id="lead-in">
   <div class="lead-inner">
     <h1 class="headline">When product needs to drive customer value and growth.</h1>
-    <p class="hero-body">With twenty years experience leading product teams across Australia and internationally — Dave specialises in enabling product driven growth through clear strategy and relentless customer focus.</p>
+    <p class="hero-body">Dave Collins is an independent product consultant with twenty years experience leading product teams across Australia and internationally — specialising in enabling product driven growth through clear strategy and relentless customer focus.</p>
     <p class="hero-body">If your product team is busy but not moving the needle, strategy has lost its connection to delivery, or you need senior product leadership urgently — Dave can help.</p>
     <a href="#services" class="hero-arrow"></a>
   </div>
@@ -676,10 +686,11 @@
 
         <div class="contact-details">
           <a href="tel:+61436291734" class="contact-detail-line">+61 436 291 734</a>
+          <a href="/cdn-cgi/l/email-protection#f89c998e9db89c998e9d9b97949491968bd69b97" class="contact-detail-line"><span class="__cf_email__" data-cfemail="42262334270226233427212d2e2e2b2c316c212d">[email&#160;protected]</span></a>
         </div>
 
         <div class="contact-icons">
-          <a href="mailto:davcollo@gmail.com" title="Email"><i class="fa-regular fa-envelope"></i></a>
+          <a href="/cdn-cgi/l/email-protection#b8dcd9ceddf8dcd9cedddbd7d4d4d1d6cb96dbd7" title="Email"><i class="fa-regular fa-envelope"></i></a>
           <a href="https://linkedin.com/in/daveacollo" target="_blank" title="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
           <a href="https://wa.me/61436291734" target="_blank" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
         </div>
@@ -720,7 +731,7 @@
   </div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   // ── Mobile nav ──
   var hamburger = document.getElementById('hamburger');
   var mobileNav = document.getElementById('mobile-nav');
@@ -796,14 +807,4 @@
           gtag('event', 'form_submit', { event_category: 'contact', event_label: 'contact_form' });
         }, function(error) {
           status.style.display = 'block';
-          status.style.color = '#c0392b';
-          status.textContent = 'Something went wrong — please email dave@davecollins.co directly.';
-          btn.textContent = 'Send Message';
-          btn.disabled = false;
-          console.error('EmailJS error:', error);
-        });
-    });
-  }
-</script>
-</body>
-</html>
+          status.style.color = '#c0
