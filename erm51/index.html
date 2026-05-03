@@ -101,10 +101,7 @@
     justify-content: center;
     position: relative;
   }
-  .row-header::before { content:''; position:absolute; left:0;top:0;bottom:0; width:4px; }
-  .row-keep::before  { background: var(--red);  }
-  .row-win::before   { background: var(--teal); }
-  .row-scale::before { background: var(--gray); }
+
   .row-keep  { background: var(--red-bg);   }
   .row-win   { background: var(--teal-bg);  }
   .row-scale { background: var(--slate-bg); }
@@ -344,8 +341,7 @@ function exportPPTX() {
 
       // Row label
       slide.addShape('rect', { x:SX, y:ry, w:LBL_W, h:ROW_H, fill:{color:row.bg}, line:{color:C.lightgray,width:0.5} });
-      slide.addShape('rect', { x:SX, y:ry, w:0.05,  h:ROW_H, fill:{color:row.color}, line:{color:row.color,width:0} });
-      slide.addText(row.label, { x:SX+0.08, y:ry+0.12, w:LBL_W-0.12, h:0.22, fontFace:'Calibri', fontSize:8, color:C.black, bold:true });
+        slide.addText(row.label, { x:SX+0.08, y:ry+0.12, w:LBL_W-0.12, h:0.22, fontFace:'Calibri', fontSize:8, color:C.black, bold:true });
       slide.addText(row.sub,   { x:SX+0.08, y:ry+0.36, w:LBL_W-0.12, h:0.18, fontFace:'Calibri', fontSize:7, color:C.gray, italic:true });
 
       const cellDefs = [
@@ -875,8 +871,7 @@ function exportPPTX() {
 
       // Row label
       slide.addShape('rect', { x:SX, y:ry, w:LBL_W, h:ROW_H, fill:{color:row.bg}, line:{color:C.lightgray,width:0.5} });
-      slide.addShape('rect', { x:SX, y:ry, w:0.05,  h:ROW_H, fill:{color:row.color}, line:{color:row.color,width:0} });
-      slide.addText(row.label, { x:SX+0.08, y:ry+0.12, w:LBL_W-0.12, h:0.22, fontFace:'Calibri', fontSize:8, color:C.black, bold:true });
+        slide.addText(row.label, { x:SX+0.08, y:ry+0.12, w:LBL_W-0.12, h:0.22, fontFace:'Calibri', fontSize:8, color:C.black, bold:true });
       slide.addText(row.sub,   { x:SX+0.08, y:ry+0.36, w:LBL_W-0.12, h:0.18, fontFace:'Calibri', fontSize:7, color:C.gray, italic:true });
 
       const cellDefs = [
