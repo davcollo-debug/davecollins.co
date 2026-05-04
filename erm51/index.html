@@ -220,6 +220,10 @@
   .type-Platform{ background: var(--offwhite); color: var(--gray); }
   .type-NZ      { background: #E6F2EC; color: #1E7A3D; }
   .card-date { font-size: 10px; color: var(--gray); font-style: italic; margin-top: 3px; }
+  .card-age { font-size: 10px; font-weight: 500; padding: 2px 6px; border-radius: 4px; margin-top: 4px; display: inline-block; }
+  .card-age.age-ok     { background: #F0FDF4; color: #16A34A; }
+  .card-age.age-warn   { background: #FEF9C3; color: #CA8A04; }
+  .card-age.age-overdue{ background: #FEF2F2; color: #DC2626; }
   .card-problem { font-size: 10.5px; color: var(--gray); line-height: 1.45; margin-top: 6px; border-top: 1px solid var(--lightgray); padding-top: 6px; }
   .done-stamp { font-size: 10px; color: var(--rag-green); font-weight: 600; margin-top: 4px; }
 
@@ -231,6 +235,19 @@
     cursor: pointer; transition: all 0.15s; text-align: center;
   }
   .add-card-btn:hover { border-color: var(--teal); color: var(--teal); background: var(--teal-bg); }
+
+
+  /* Discovery gates */
+  .gates-section { margin-top: 6px; border-top: 1px solid var(--lightgray); padding-top: 8px; }
+  .gates-label { font-size: 10px; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; }
+  .gates-lock { font-size: 14px; }
+  .gate-item { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 6px; cursor: pointer; }
+  .gate-item input[type="checkbox"] { margin-top: 2px; width: 14px; height: 14px; accent-color: var(--coral); flex-shrink: 0; cursor: pointer; }
+  .gate-item label { font-size: 11px; color: var(--black); line-height: 1.4; cursor: pointer; }
+  /* Card gate indicator */
+  .card-gate-status { font-size: 11px; margin-top: 4px; display: inline-flex; align-items: center; gap: 4px; }
+  /* Modal gate section hidden by default */
+  .modal-gates { display: none; }
 
   .modal-overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,0.4);
@@ -280,6 +297,19 @@
   body { background: white; }
   .header { position: static; box-shadow: none; }
   .btn-export { display: none; }
+
+  /* Discovery gates */
+  .gates-section { margin-top: 6px; border-top: 1px solid var(--lightgray); padding-top: 8px; }
+  .gates-label { font-size: 10px; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; }
+  .gates-lock { font-size: 14px; }
+  .gate-item { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 6px; cursor: pointer; }
+  .gate-item input[type="checkbox"] { margin-top: 2px; width: 14px; height: 14px; accent-color: var(--coral); flex-shrink: 0; cursor: pointer; }
+  .gate-item label { font-size: 11px; color: var(--black); line-height: 1.4; cursor: pointer; }
+  /* Card gate indicator */
+  .card-gate-status { font-size: 11px; margin-top: 4px; display: inline-flex; align-items: center; gap: 4px; }
+  /* Modal gate section hidden by default */
+  .modal-gates { display: none; }
+
   .modal-overlay { display: none !important; }
   .add-card-btn { display: none !important; }
   .grid-wrap { padding: 8px 12px; }
@@ -479,6 +509,25 @@ function exportPPTX() {
       </div>
       <div class="rag-context-note" id="rag-note"></div>
     </div>
+    <div class="modal-gates" id="modal-gates">
+      <div class="gates-section">
+        <div class="gates-label">
+          Discovery gates <span class="gates-lock" id="gates-lock">🔒</span>
+        </div>
+        <div class="gate-item">
+          <input type="checkbox" id="gate-usp" onchange="updateGatesLock()">
+          <label for="gate-usp">Clear understanding of solution USP — is it competitively strong?</label>
+        </div>
+        <div class="gate-item">
+          <input type="checkbox" id="gate-standalone" onchange="updateGatesLock()">
+          <label for="gate-standalone">Standalone module decision made?</label>
+        </div>
+        <div class="gate-item">
+          <input type="checkbox" id="gate-ai" onchange="updateGatesLock()">
+          <label for="gate-ai">Assessed if AI can be useful, viable and feasible in the solution?</label>
+        </div>
+      </div>
+    </div>
     <div class="modal-actions">
       <button class="btn btn-delete" id="btn-delete" onclick="deleteCard()" style="display:none">Delete</button>
       <button class="btn" onclick="closeModal()">Cancel</button>
@@ -518,37 +567,37 @@ let cards = {
   keep: {
     done:     [{ id:'c1',  title:'NZ eCase Config', arr:'$330k migration ARR', type:'NZ', rag:'green', date:'Shipped Q1 2026', problem:'NZ customers needed initial CLL configuration to commence migration testing.' }],
     now:      [
-      { id:'c2', title:'Fix Award Interpreter, Rostering & Claiming', arr:'$544k ARR at risk', type:'HDC', rag:'amber', date:'Q2 2026', problem:'Amana, Helping Hand and LDK cannot process claims correctly. ~$30k/month in manual workarounds and active legal claims.' },
-      { id:'c3', title:'RAC Finance Module', arr:'$330k ARR backlog', type:'RAC', rag:'green', date:'Q3 2026', problem:'12 customers sold RAC Finance that has not been built. Renewal risk grows each month.' },
+      { id:'c2', title:'Fix Award Interpreter, Rostering & Claiming', arr:'$544k ARR at risk', type:'HDC', rag:'amber', movedAt:'2026-05-04', date:'Q2 2026', problem:'Amana, Helping Hand and LDK cannot process claims correctly. ~$30k/month in manual workarounds and active legal claims.' },
+      { id:'c3', title:'RAC Finance Module', arr:'$330k ARR backlog', type:'RAC', rag:'green', movedAt:'2026-05-04', date:'Q3 2026', problem:'12 customers sold RAC Finance that has not been built. Renewal risk grows each month.' },
     ],
     next:     [{ id:'c4',  title:'FHIR & Aged Care Act Compliance', arr:'Regulatory deadline', type:'HDC', rag:'amber', date:'', problem:'Mandatory government compliance for all HDC operators. Non-compliance creates legal exposure for customers.' }],
     'later-a':[{ id:'c5',  title:'CLL Migration — AU SME Customers', arr:'$248k–$620k ARR', type:'CLL-ANZ', rag:'green', date:'Q4 2026', problem:'Small and mid-size AU customers move from eCase to CLL before HDC sustain mode begins.' },
-               { id:'c14', title:'Support at Home E2E', arr:'Unlocks SaH migration', type:'CLL-ANZ', rag:'green', date:'Q3 2026', problem:'Existing HDC customers on SaH funding cannot migrate to CLL without end-to-end SaH billing. This gates the migration sequence, not new logo acquisition.' },
-               { id:'c15', title:'CHSP + SA Integration', arr:'Gates CHSP migration', type:'CLL-ANZ', rag:'amber', date:'Q4 2026', problem:'CHSP-funded customers cannot move to CLL until funding integrations are in place. Migration dependency.' }],
-    'later-b':[{ id:'c5b', title:'CLL Migration — Enterprise', arr:'$1M+ ARR', type:'CLL-ANZ', rag:'amber', date:'Q1 2027', problem:'Large AU customers (Amana, Helping Hand) migrate after CLL functional depth is proven on SME wave.' },
-               { id:'c16', title:'Group Bookings + Employee Self-Service', arr:'Migration gate', type:'CLL-ANZ', rag:'amber', date:'Q4 2026', problem:'Required by several HDC customers before they can migrate. Blocking migration for a segment of the customer base.' },
-               { id:'c17', title:'RAC/RV Integration', arr:'Dual HDC/RAC customers', type:'CLL-ANZ', rag:'amber', date:'Q1 2027', problem:'Helping Hand and Amana need CLL/RAC interoperability before they can fully migrate off eCase HDC.' }],
+               { id:'c14', title:'Support at Home E2E', arr:'Unlocks SaH migration', type:'CLL-ANZ', rag:'green', movedAt:'2026-05-04', date:'Q3 2026', problem:'Existing HDC customers on SaH funding cannot migrate to CLL without end-to-end SaH billing. This gates the migration sequence, not new logo acquisition.' },
+               { id:'c15', title:'CHSP + SA Integration', arr:'Gates CHSP migration', type:'CLL-ANZ', rag:'amber', movedAt:'2026-05-04', date:'Q4 2026', problem:'CHSP-funded customers cannot move to CLL until funding integrations are in place. Migration dependency.' }],
+    'later-b':[{ id:'c5b', title:'CLL Migration — Enterprise', arr:'$1M+ ARR', type:'CLL-ANZ', rag:'amber', movedAt:'2026-05-04', date:'Q1 2027', problem:'Large AU customers (Amana, Helping Hand) migrate after CLL functional depth is proven on SME wave.' },
+               { id:'c16', title:'Group Bookings + Employee Self-Service', arr:'Migration gate', type:'CLL-ANZ', rag:'amber', movedAt:'2026-05-04', date:'Q4 2026', problem:'Required by several HDC customers before they can migrate. Blocking migration for a segment of the customer base.' },
+               { id:'c17', title:'RAC/RV Integration', arr:'Dual HDC/RAC customers', type:'CLL-ANZ', rag:'amber', movedAt:'2026-05-04', date:'Q1 2027', problem:'Helping Hand and Amana need CLL/RAC interoperability before they can fully migrate off eCase HDC.' }],
   },
   win: {
     done:     [],
     now:      [],
     next:     [{ id:'c8',  title:'Care Plan Updates', arr:'Competitive parity', type:'CLL-ANZ', rag:'green', date:'', problem:'Prospects evaluating CLL expect modern care planning tools. Absence of this capability is cited as a gap in sales conversations.' }],
-    'later-a':[{ id:'c8b', title:'MOA Integration', arr:'TBD', type:'CLL-UK', rag:'amber', date:'', problem:'MOA integration would open new customer segments. Needs scoping — CLL UK dependency.' }],
-    'later-b':[{ id:'c13b', title:'AI Scribe', arr:'Premium feature', type:'CLL-ANZ', rag:'amber', date:'', problem:'Clinical documentation is highly manual. AI scribe is a differentiating feature prospects want to see before committing to CLL.' }],
+    'later-a':[{ id:'c8b', title:'MOA Integration', arr:'TBD', type:'CLL-UK', rag:'amber', movedAt:'2026-05-04', date:'', problem:'MOA integration would open new customer segments. Needs scoping — CLL UK dependency.' }],
+    'later-b':[{ id:'c13b', title:'AI Scribe', arr:'Premium feature', type:'CLL-ANZ', rag:'amber', movedAt:'2026-05-04', date:'', problem:'Clinical documentation is highly manual. AI scribe is a differentiating feature prospects want to see before committing to CLL.' }],
   },
   ops: {
     done:     [],
-    now:      [{ id:'c10', title:'AWS Migration Phase 1', arr:'$260k cost saving', type:'Platform', rag:'green', date:'Q2 2026', problem:'Current infrastructure is expensive and limits deployment speed. AWS reduces ops cost and improves reliability.' }],
-    next:     [{ id:'c11', title:'PHP Upgrade', arr:'Risk reduction', type:'Platform', rag:'amber', date:'', problem:'PHP version end-of-life creates security exposure. Required before it becomes a critical risk.' }],
-    'later-a':[{ id:'c12', title:'Onboarding Automation', arr:'~$50k/customer saving', type:'Platform', rag:'green', date:'', problem:'Manual onboarding costs significant implementation hours. Automation reduces time-to-value and headcount dependency.' }],
+    now:      [{ id:'c10', title:'AWS Migration Phase 1', arr:'$260k cost saving', type:'Platform', rag:'green', movedAt:'2026-05-04', date:'Q2 2026', problem:'Current infrastructure is expensive and limits deployment speed. AWS reduces ops cost and improves reliability.' }],
+    next:     [{ id:'c11', title:'PHP Upgrade', arr:'Risk reduction', type:'Platform', rag:'amber', movedAt:'2026-05-04', date:'', problem:'PHP version end-of-life creates security exposure. Required before it becomes a critical risk.' }],
+    'later-a':[{ id:'c12', title:'Onboarding Automation', arr:'~$50k/customer saving', type:'Platform', rag:'green', movedAt:'2026-05-04', date:'', problem:'Manual onboarding costs significant implementation hours. Automation reduces time-to-value and headcount dependency.' }],
     'later-b':[],
   },
   scale: {
     done:     [],
     now:      [],
-    next:     [{ id:'cs1', title:'RAC/HDC Data Bridge', arr:'Dual-product customers', type:'Platform', rag:'amber', date:'', problem:'Customers running both RAC and HDC need a reliable data bridge between products to avoid manual reconciliation.' }],
-    'later-a':[{ id:'cs2', title:'MOA Integration', arr:'TBD', type:'CLL-UK', rag:'amber', date:'', problem:'MOA integration would open new customer segments. Needs scoping — CLL UK dependency.' }],
-    'later-b':[{ id:'cs3', title:'Third-party Rostering Integration', arr:'Efficiency gain', type:'Platform', rag:'amber', date:'', problem:'Several customers use third-party rostering tools. Native integration would reduce manual data entry and support ticket volumes.' }],
+    next:     [{ id:'cs1', title:'RAC/HDC Data Bridge', arr:'Dual-product customers', type:'Platform', rag:'amber', movedAt:'2026-05-04', date:'', problem:'Customers running both RAC and HDC need a reliable data bridge between products to avoid manual reconciliation.' }],
+    'later-a':[{ id:'cs2', title:'MOA Integration', arr:'TBD', type:'CLL-UK', rag:'amber', movedAt:'2026-05-04', date:'', problem:'MOA integration would open new customer segments. Needs scoping — CLL UK dependency.' }],
+    'later-b':[{ id:'cs3', title:'Third-party Rostering Integration', arr:'Efficiency gain', type:'Platform', rag:'amber', movedAt:'2026-05-04', date:'', problem:'Several customers use third-party rostering tools. Native integration would reduce manual data entry and support ticket volumes.' }],
   },
 };
 
@@ -570,8 +619,8 @@ function render() {
   grid.innerHTML = `
     <div class="col-header row-corner"></div>
     <div class="col-header col-done"><div class="col-title">Done</div><div class="col-sub">Shipped · last 90 days</div></div>
-    <div class="col-header col-now"><div class="col-title">Now</div><div class="col-sub">⚠ Max 2 per product · delivery RAG</div></div>
-    <div class="col-header col-next"><div class="col-title">Next</div><div class="col-sub">⚠ Max 2 per product · solution confidence RAG</div></div>
+    <div class="col-header col-now"><div class="col-title">Now <span style="font-weight:400;opacity:0.85;">(Delivery)</span></div><div class="col-sub">⚠ Max 2 per product · delivery RAG</div></div>
+    <div class="col-header col-next"><div class="col-title">Next <span style="font-weight:400;opacity:0.85;">(Discovery)</span></div><div class="col-sub">⚠ Max 2 per product · solution confidence RAG</div></div>
     <div class="col-header col-later" style="border-right:none"><div class="col-title">Later</div><div class="col-sub">Ideas &amp; future thinking</div></div>
   `;
 
@@ -686,6 +735,8 @@ function makeCard(card, row, col) {
       <span class="card-type-chip ${typeClass(card.type)}">${typeLabel(card.type)}</span>
     </div>
     ${showDate ? `<div class="card-date">${icon} ${card.date}</div>` : ''}
+    ${(col==='now'||col==='next') && card.movedAt ? (() => { const days = Math.floor((Date.now() - new Date(card.movedAt)) / 86400000); const cls = days <= 7 ? 'age-ok' : days <= 21 ? 'age-warn' : 'age-overdue'; const label = days === 0 ? 'Added today' : days + 'd in column'; return `<div class="card-age ${cls}">⏱ ${label}</div>`; })() : ''}
+    ${col==='next' ? (() => { const g=card.gates||{}; const count=[g.usp,g.standalone,g.ai].filter(Boolean).length; return `<div class="card-gate-status">${count===3 ? '🔓' : '🔒'} <span style="font-size:10px;color:var(--gray)">${count}/3 gates</span></div>`; })() : ''}
     ${card.problem ? `<div class="card-problem">${card.problem}</div>` : ''}
     ${col==='done' ? '<div class="done-stamp">✓ Shipped</div>' : ''}
   `;
@@ -717,6 +768,11 @@ function setupDrop(el) {
     const idx = src.findIndex(c=>c.id===dragCard);
     if (idx===-1) return;
     const [moved] = src.splice(idx,1);
+    if (tc==='now'||tc==='next') {
+      if (tc!==dragCol) moved.movedAt = new Date().toISOString().split('T')[0];
+    } else {
+      moved.movedAt = '';
+    }
     if (!cards[tr][tc]) cards[tr][tc]=[];
     cards[tr][tc].push(moved);
     render(); dragCard=null;
@@ -744,6 +800,8 @@ function updateModalRag(col) {
   document.getElementById('date-row').style.display = col==='done' ? 'none' : '';
   const ragRow = document.getElementById('rag-row');
   if (ragRow) ragRow.style.display = (col==='later-a'||col==='later-b') ? 'none' : '';
+  const gatesEl = document.getElementById('modal-gates');
+  if (gatesEl) gatesEl.style.display = col==='next' ? 'block' : 'none';
 }
 
 function openModal(id, row, col) {
@@ -758,10 +816,18 @@ function openModal(id, row, col) {
     document.getElementById('f-arr').value     = card.arr||'';
     document.getElementById('f-type').value    = card.type||'CLL-ANZ';
     document.getElementById('f-date').value    = card.date||'';
+    if (col==='next') {
+      document.getElementById('gate-usp').checked        = !!(card.gates && card.gates.usp);
+      document.getElementById('gate-standalone').checked = !!(card.gates && card.gates.standalone);
+      document.getElementById('gate-ai').checked         = !!(card.gates && card.gates.ai);
+      updateGatesLock();
+    }
     selectRag(card.rag||'green');
   } else {
     document.getElementById('modal-title').textContent='Add Card';
     ['f-title','f-problem','f-arr','f-date'].forEach(i=>document.getElementById(i).value='');
+    ['gate-usp','gate-standalone','gate-ai'].forEach(id => { const el=document.getElementById(id); if(el) el.checked=false; });
+    updateGatesLock();
     document.getElementById('f-type').value='CLL-ANZ';
     selectRag('green');
   }
@@ -782,12 +848,20 @@ function selectRag(val) {
 function saveCard() {
   const title=document.getElementById('f-title').value.trim();
   if (!title) { document.getElementById('f-title').focus(); return; }
+  const today = new Date().toISOString().split('T')[0];
+  const gates = editingCol==='next' ? {
+    usp:        document.getElementById('gate-usp').checked,
+    standalone: document.getElementById('gate-standalone').checked,
+    ai:         document.getElementById('gate-ai').checked,
+  } : null;
   const data = {
     title, problem:document.getElementById('f-problem').value.trim(),
     arr:document.getElementById('f-arr').value.trim(),
     type:document.getElementById('f-type').value,
     date:document.getElementById('f-date').value.trim(),
     rag:selectedRag,
+    movedAt: (editingCol==='now'||editingCol==='next') ? today : '',
+    gates,
   };
   if (editingId) {
     const card=(cards[editingRow][editingCol]||[]).find(c=>c.id===editingId);
@@ -816,6 +890,14 @@ document.getElementById('modal-overlay').addEventListener('click',e=>{if(e.targe
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();if(e.key==='Enter'&&e.metaKey)saveCard();});
 
 render();
+
+function updateGatesLock() {
+  const all = ['gate-usp','gate-standalone','gate-ai'].every(id => {
+    const el = document.getElementById(id); return el && el.checked;
+  });
+  const lock = document.getElementById('gates-lock');
+  if (lock) lock.textContent = all ? '🔓' : '🔒';
+}
 
 function exportPDF() {
   // Hide interactive UI elements not needed in print
