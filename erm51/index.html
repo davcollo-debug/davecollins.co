@@ -55,6 +55,9 @@
   .header-right { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   .btn-export { font-family: var(--font); font-size: 12px; font-weight: 500; padding: 7px 16px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.12); color: var(--white); cursor: pointer; white-space: nowrap; transition: all 0.15s; }
   .btn-export:hover { background: rgba(255,255,255,0.22); }
+  .btn-undo { font-family: var(--font); font-size: 12px; font-weight: 500; padding: 7px 14px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: transparent; color: rgba(255,255,255,0.7); cursor: pointer; white-space: nowrap; transition: all 0.15s; }
+  .btn-undo:not([disabled]):hover { background: rgba(255,255,255,0.12); color: var(--white); }
+  .btn-undo[disabled] { cursor: not-allowed; }
   .btn-pptx { background: var(--coral); color: var(--white); border-color: var(--coral); }
   .btn-pptx:hover { background: #d44a3c; border-color: #d44a3c; }
   .header-logo { height: 36px; width: auto; display: block; }
@@ -459,6 +462,7 @@ function exportPPTX() {
     <div class="header-rag-key"><span class="rag-key-group"><strong>Now RAG:</strong> <span class="rk-dot" style="background:var(--rag-green)"></span>On track&nbsp;&nbsp;<span class="rk-dot" style="background:var(--rag-amber)"></span>Date at risk&nbsp;&nbsp;<span class="rk-dot" style="background:var(--rag-red)"></span>Blocked</span><span class="rag-key-group"><strong>Next RAG:</strong> <span class="rk-dot" style="background:var(--rag-green)"></span>High confidence&nbsp;&nbsp;<span class="rk-dot" style="background:var(--rag-amber)"></span>Exploring&nbsp;&nbsp;<span class="rk-dot" style="background:var(--rag-red)"></span>Problem unclear</span></div>
   </div>
   <div class="header-right">
+    <button class="btn btn-undo" id="btn-undo" onclick="undo()" disabled style="opacity:0.4" title="Nothing to undo">&#8630; Undo</button>
     <button class="btn btn-export" onclick="exportPDF()">&#8595; PDF</button>
     <button class="btn btn-export btn-pptx" onclick="exportPPTX()">&#8595; PowerPoint</button>
   </div>
@@ -602,6 +606,51 @@ let cards = {
 };
 
 let editingId=null, editingRow=null, editingCol=null, selectedRag='green';
+const history = [];
+const MAX_HISTORY = 30;
+
+function snapshot() {
+  history.push(JSON.stringify(cards));
+  if (history.length > MAX_HISTORY) history.shift();
+  updateUndoBtn();
+}
+
+function undo() {
+  if (!history.length) return;
+  const prev = history.pop();
+  try {
+    const parsed = JSON.parse(prev);
+    Object.keys(parsed).forEach(k => { if (cards[k] !== undefined) cards[k] = parsed[k]; });
+    saveToStorage();
+    render();
+  } catch(e) { console.error('Undo failed:', e); }
+  updateUndoBtn();
+}
+
+function updateUndoBtn() {
+  const btn = document.getElementById('btn-undo');
+  if (!btn) return;
+  btn.disabled = history.length === 0;
+  btn.style.opacity = history.length === 0 ? '0.4' : '1';
+  btn.title = history.length ? `Undo (${history.length} step${history.length>1?'s':''} available)` : 'Nothing to undo';
+}
+
+// Persist cards to localStorage
+function saveToStorage() {
+  try { localStorage.setItem('evaran_roadmap_cards', JSON.stringify(cards)); } catch(e) {}
+}
+function loadFromStorage() {
+  try {
+    const saved = localStorage.getItem('evaran_roadmap_cards');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      // Validate structure before applying
+      if (parsed && typeof parsed === 'object') {
+        Object.keys(parsed).forEach(k => { if (cards[k]) cards[k] = parsed[k]; });
+      }
+    }
+  } catch(e) { console.warn('Could not restore saved roadmap:', e); }
+}
 let dragCard=null, dragRow=null, dragCol=null, idCounter=30;
 
 function typeClass(t) {
@@ -613,8 +662,10 @@ function typeLabel(t) {
 function ctxKey(col) { return col.startsWith('later') ? 'later' : col; }
 
 function render() {
-  const grid = document.getElementById('grid');
-  grid.innerHTML = '';
+  try {
+    const grid = document.getElementById('grid');
+    if (!grid) return;
+    grid.innerHTML = '';
 
   grid.innerHTML = `
     <div class="col-header row-corner"></div>
@@ -627,7 +678,7 @@ function render() {
   ROWS.forEach(row => {
     const rh = document.createElement('div');
     rh.className = `row-header ${row.cls}`;
-    rh.innerHTML = `<div class="prio-badge prio-${row.prio}">${row.emoji} ${row.prio}</div><div class="row-title">${row.label}</div><div class="row-lens">${row.sub}</div><div class="row-why">${row.why}</div>`;
+    rh.innerHTML = `<div class="prio-badge prio-${row.prio}">${row.emoji} ${row.prio}</div><div class="row-title">${row.label}</div><div class="row-lens">${row.sub}</div>`;
     grid.appendChild(rh);
 
     ['done','now','next'].forEach(col => {
@@ -709,6 +760,8 @@ function render() {
     laterCell.appendChild(inner);
     grid.appendChild(laterCell);
   });
+  saveToStorage();
+  } catch(e) { console.error('Render error:', e); }
 }
 
 function makeCard(card, row, col) {
@@ -741,7 +794,7 @@ function makeCard(card, row, col) {
     ${col==='done' ? '<div class="done-stamp">✓ Shipped</div>' : ''}
   `;
 
-  el.onclick = e => { if (!e.target.classList.contains('rag-badge')) openModal(card.id, row.id, col); };
+  el.onclick = e => { if (e.detail > 1) return; if (!e.target.classList.contains('rag-badge')) openModal(card.id, row.id, col); };
   el.addEventListener('dragstart', e => {
     dragCard=card.id; dragRow=row.id; dragCol=col;
     e.dataTransfer.effectAllowed='move';
@@ -758,7 +811,8 @@ function setupDrop(el) {
     e.preventDefault(); el.classList.remove('drag-over');
     if (!dragCard) return;
     const tr = el.dataset.row, tc = el.dataset.col;
-    if (!tr || !tc || (tr===dragRow && tc===dragCol)) return;
+    if (!tr || !tc) return;
+    if (tr===dragRow && tc===dragCol) return;
     if (tc==='now' || tc==='next') {
       const movedType = (cards[dragRow][dragCol]||[]).find(c=>c.id===dragCard)?.type;
       const sameType = (cards[tr][tc]||[]).filter(c=>c.type===movedType).length;
@@ -767,6 +821,7 @@ function setupDrop(el) {
     const src = cards[dragRow][dragCol]||[];
     const idx = src.findIndex(c=>c.id===dragCard);
     if (idx===-1) return;
+    snapshot();
     const [moved] = src.splice(idx,1);
     if (tc==='now'||tc==='next') {
       if (tc!==dragCol) moved.movedAt = new Date().toISOString().split('T')[0];
@@ -781,8 +836,10 @@ function setupDrop(el) {
 
 function cycleRag(e, id, row, col) {
   e.stopPropagation();
+  if (!cards[row] || !cards[row][col]) return;
   const card=(cards[row][col]||[]).find(c=>c.id===id);
   if (!card) return;
+  snapshot();
   card.rag={green:'amber',amber:'red',red:'green'}[card.rag]||'green';
   render();
 }
@@ -846,6 +903,7 @@ function selectRag(val) {
 }
 
 function saveCard() {
+  if (!editingRow || !editingCol) return;
   const title=document.getElementById('f-title').value.trim();
   if (!title) { document.getElementById('f-title').focus(); return; }
   const today = new Date().toISOString().split('T')[0];
@@ -863,6 +921,7 @@ function saveCard() {
     movedAt: (editingCol==='now'||editingCol==='next') ? today : '',
     gates,
   };
+  snapshot();
   if (editingId) {
     const card=(cards[editingRow][editingCol]||[]).find(c=>c.id===editingId);
     if (card) Object.assign(card,data);
@@ -880,6 +939,7 @@ function saveCard() {
 
 function deleteCard() {
   if (!editingId) return;
+  snapshot();
   const arr=cards[editingRow][editingCol]||[];
   const idx=arr.findIndex(c=>c.id===editingId);
   if (idx>-1) arr.splice(idx,1);
@@ -887,9 +947,15 @@ function deleteCard() {
 }
 
 document.getElementById('modal-overlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();if(e.key==='Enter'&&e.metaKey)saveCard();});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') closeModal();
+  if(e.key==='Enter'&&e.metaKey) saveCard();
+  if(e.key==='z'&&(e.metaKey||e.ctrlKey)&&!e.shiftKey) { e.preventDefault(); undo(); }
+});
 
+loadFromStorage();
 render();
+updateUndoBtn();
 
 function updateGatesLock() {
   const all = ['gate-usp','gate-standalone','gate-ai'].every(id => {
