@@ -927,7 +927,7 @@ function makeCard(card, row, col) {
       <span class="card-type-chip ${typeClass(card.type)}">${typeLabel(card.type)}</span>
     </div>
     ${showDate ? `<div class="card-date">${icon} ${card.date}</div>` : ''}
-    ${(col==='now'||col==='next') && card.movedAt ? (() => { const days = Math.floor((Date.now() - new Date(card.movedAt)) / 86400000); const cls = days <= 7 ? 'age-ok' : days <= 21 ? 'age-warn' : 'age-overdue'; const label = days === 0 ? 'Added today' : days + 'd in column'; return `<div class="card-age ${cls}">⏱ ${label}</div>`; })() : ''}() : ''}
+    ${(col==='now'||col==='next') && card.movedAt ? (() => { const days = Math.floor((Date.now() - new Date(card.movedAt)) / 86400000); const cls = days <= 7 ? 'age-ok' : days <= 21 ? 'age-warn' : 'age-overdue'; const label = days === 0 ? 'Added today' : days + 'd in column'; return `<div class="card-age ${cls}">⏱ ${label}</div>`; })() : ''}
     ${card.problem ? `<div class="card-problem">${card.problem}</div>` : ''}
     ${card.isAI ? '<div class="card-ai-badge">✦ AI Opportunity</div>' : ''}
     ${col==='done' ? '<div class="done-stamp">✓ Shipped</div>' : ''}
